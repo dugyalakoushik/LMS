@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Login Page</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Custom style to center the h1 and give it a subtle color and font */
+      h1 {
+        text-align: center;
+        color: #495057; /* Subtle gray color */
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Use a sans-serif font */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1>LMS Login Page</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card">
+            <div id="messageContainer" class="mb-4"></div>
+            <div class="card-header">Login</div>
+            <div class="card-body">
+              <form id="loginForm">
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    name="username"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password:</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    required
+                  />
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="submitForm()"
+                  >
+                    Login
+                  </button>
+                  <a href="register.html" class="btn btn-success">Sign Up</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      function submitForm() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        console.log("hello " + username + " password: " + password);
+
+        fetch("http://localhost:8080/user/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error == null) {
+              console.log(data);
+              localStorage.setItem("currentUser", JSON.stringify(data));
+              window.location.href = "dashboard.html";
+            } else alert(data.error);
+          })
+          .catch((error) => alert(error));
+      }
+    </script>
+  </body>
+</html>

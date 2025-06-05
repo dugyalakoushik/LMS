@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Membership Selection</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="mb-4">Select a Membership</h2>
+
+      <form action="membership" method="post">
+        <div class="row">
+          <!-- Membership 1 -->
+
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="card-title">Silver Membership</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">
+                  <strong>Price:</strong> $10.99 per year<br />
+                  <strong>Validity:</strong> 30 days<br />
+                  <strong>Number of books:</strong> 3
+                </p>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="selectedMembershipTypeId"
+                    value="1"
+                    id="membership1"
+                  />
+                  <label class="form-check-label" for="membership2"
+                    >Select</label
+                  >
+                  <input type="hidden" name="validity" value="180" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Membership 2 -->
+
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="card-title">Gold Membership</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">
+                  <strong>Price:</strong> $28.99 per year<br />
+                  <strong>Validity:</strong> 90 days<br />
+                  <strong>Number of books:</strong> 3
+                </p>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="selectedMembershipTypeId"
+                    value="2"
+                    id="membership2"
+                  />
+                  <label class="form-check-label" for="membership1"
+                    >Select</label
+                  >
+                  <input type="hidden" name="validity" value="365" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Membership 3 -->
+
+          <div class="col-md-4">
+            <div class="card mb-4">
+              <div class="card-header bg-light">
+                <h5 class="card-title">Platinum Membership</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">
+                  <strong>Price:</strong> $99.99 per year<br />
+                  <strong>Validity:</strong> 365 days<br />
+                  <strong>Number of books:</strong> 4
+                </p>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    name="selectedMembershipTypeId"
+                    value="3"
+                    id="membership3"
+                  />
+                  <label class="form-check-label" for="membership2"
+                    >Select</label
+                  >
+                  <input type="hidden" name="validity" value="180" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add more memberships as needed -->
+        </div>
+
+        <!-- Other form fields and submit button -->
+      </form>
+
+      <form id="membershipForm">
+        <div class="row" id="membershipOptionsContainer"></div>
+
+        <!-- Address Form Fields -->
+        <div class="form-group">
+          <label for="lineOne">Address Line 1:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="lineOne"
+            name="lineOne"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="city">City:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="city"
+            name="city"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="state">State:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="state"
+            name="state"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP Code:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="zip"
+            name="zip"
+            required
+            pattern="\d{5}"
+          />
+          <small class="text-muted"
+            >Please enter a valid 5-digit ZIP code.</small
+          >
+        </div>
+        <div class="form-group">
+          <label for="country">Country :</label>
+          <input type="text" class="form-control" id="country" name="country" />
+        </div>
+        <div class="form-group">
+          <label for="contact">Contact Number:</label>
+          <input
+            type="tel"
+            class="form-control"
+            id="contact"
+            name="contact"
+            required
+            pattern="[0-9]{10}"
+          />
+          <small class="text-muted"
+            >Please enter a 10-digit phone number.</small
+          >
+        </div>
+
+        <!-- Card Details Form Fields -->
+        <h2>Enter Card Details</h2>
+        <div class="form-group">
+          <label for="cardNumber">Card Number:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="cardNumber"
+            name="cardNumber"
+            required
+            pattern="\d{16}"
+          />
+          <small class="text-muted"
+            >Please enter a valid 16-digit card number.</small
+          >
+        </div>
+        <div class="form-group">
+          <label for="cardName">Card Holder's Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="cardName"
+            name="cardName"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="startDate">Card Start Date:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="startDate"
+            name="startDate"
+            required
+            pattern="^\d{2}-\d{2}-\d{4}$"
+          />
+          <small class="text-muted">Please enter in mm-dd-yyyy format.</small>
+        </div>
+        <div class="form-group">
+          <label for="endDate">Card End Date:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="endDate"
+            name="endDate"
+            required
+            pattern="^\d{2}-\d{2}-\d{4}$"
+          />
+          <small class="text-muted">Please enter in mm-dd-yyyy format.</small>
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV:</label>
+          <input
+            type="password"
+            class="form-control"
+            id="cvv"
+            name="cvv"
+            required
+            pattern="\d{3}"
+          />
+          <small class="text-muted">Please enter a valid 3-digit CVV.</small>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="submitMembership()"
+        >
+          Select Membership
+        </button>
+      </form>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Your custom JavaScript -->
+    <script>
+      var memberships = [
+        {
+          membershipTypeId: 1,
+          type: "Silver Membership",
+          numBooks: 3,
+          validity: 30,
+          price: 10.99,
+        },
+        {
+          membershipTypeId: 2,
+          type: "Gold Membership",
+          numBooks: 3,
+          validity: 90,
+          price: 28.99,
+        },
+        {
+          membershipTypeId: 3,
+          type: "Platinum Membership",
+          numBooks: 4,
+          validity: 365,
+          price: 99.99,
+        },
+        // Add more memberships as needed
+      ];
+
+      function submitMembership() {
+        // Create an object to store form field values
+        var membershipData = {
+          selectedMembershipTypeId: document.querySelector(
+            'input[name="selectedMembershipTypeId"]:checked'
+          ).value,
+          lineOne: document.getElementById("lineOne").value,
+          city: document.getElementById("city").value,
+          state: document.getElementById("state").value,
+          zip: document.getElementById("zip").value,
+          country: document.getElementById("country").value,
+          contact: document.getElementById("contact").value,
+          cardNumber: document.getElementById("cardNumber").value,
+          cardName: document.getElementById("cardName").value,
+          startDate: document.getElementById("startDate").value,
+          endDate: document.getElementById("endDate").value,
+          cvv: document.getElementById("cvv").value,
+        };
+
+        var address = {
+          lineOne: document.getElementById("lineOne").value,
+          city: document.getElementById("city").value,
+          state: document.getElementById("state").value,
+          zip: document.getElementById("zip").value,
+          country: document.getElementById("country").value,
+          contact: document.getElementById("contact").value,
+        };
+        localStorage.setItem("address", JSON.stringify(address));
+
+        var card = {
+          cardNumber: document.getElementById("cardNumber").value,
+          cardName: document.getElementById("cardName").value,
+          startDate: document.getElementById("startDate").value,
+          endDate: document.getElementById("endDate").value,
+          cvv: document.getElementById("cvv").value,
+        };
+
+        localStorage.setItem("card", JSON.stringify(card));
+
+        var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        var selectedMembership = memberships.find(
+          (membership) =>
+            membership.membershipTypeId ===
+            parseInt(membershipData.selectedMembershipTypeId, 10)
+        );
+
+        var user = {
+          userId: currentUser.userId,
+          password: currentUser.password,
+          username: currentUser.username,
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          age: currentUser.age,
+          email: currentUser.email,
+          activity: currentUser.activity,
+          membershipType: {
+            membershipTypeId: membershipData.membershipTypeId,
+            type: selectedMembership.type,
+            numBooks: selectedMembership.numBooks,
+            validity: selectedMembership.validity,
+            price: selectedMembership.price,
+          },
+        };
+
+        var api_object = {
+          address: address,
+          card: card,
+          user: user,
+        };
+
+        console.log(api_object);
+
+        //POST request using fetch
+        fetch("http://localhost:8080/user/membership", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Add any other headers as needed
+          },
+          body: JSON.stringify(api_object),
+        }).then((response) => {
+          response.json().then((data) => {
+            console.log(data);
+            localStorage.setItem("currentUser", JSON.stringify(data));
+            window.location.href = "receipt.html";
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

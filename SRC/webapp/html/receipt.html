@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Membership Receipt</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Add custom CSS for styling the receipt here */
+      .receipt {
+        margin: 20px;
+      }
+      .receipt-header {
+        background-color: #f8f9fa;
+        padding: 10px;
+      }
+      .receipt-details {
+        margin-top: 20px;
+      }
+      .receipt-details h3 {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="mybooks.html">My Books</a></li>
+            <li><a href="logout.html">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div class="container mt-5 receipt">
+      <div class="receipt-header">
+        <h1 class="text-center">Membership Receipt</h1>
+      </div>
+
+      <div class="row receipt-details">
+        <div class="col-md-12">
+          <h3>Membership Details</h3>
+          <p>
+            <strong>Membership Type:</strong> <span id="membershipType"></span>
+          </p>
+        </div>
+      </div>
+
+      <div class="row receipt-details">
+        <div class="col-md-6">
+          <h3>Billing Address</h3>
+          <p>
+            <strong>Line 1:</strong> <span id="billingAddressLineOne"></span>
+          </p>
+          <!-- Add other billing address details as needed -->
+        </div>
+        <div class="col-md-6">
+          <h3>Card Details</h3>
+          <p><strong>Card Number:</strong> <span id="cardNumber"></span></p>
+          <!-- Add other card details as needed -->
+        </div>
+      </div>
+
+      <div class="row receipt-details">
+        <div class="col-md-12">
+          <h3>Payment Details</h3>
+          <p>
+            <strong>Membership Cost:</strong> $<span id="membershipCost"></span>
+          </p>
+          <p><strong>Tax %:</strong> $<span id="taxAmount"></span></p>
+          <p><strong>Total Amount:</strong> $<span id="totalAmount"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      // Simulated data (replace with actual data)
+      window.onload = onLoad;
+      function onLoad() {
+        var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        var card = JSON.parse(localStorage.getItem("card"));
+        var address = JSON.parse(localStorage.getItem("address"));
+
+        var receiptData = {
+          membershipType: currentUser.membershipType.type,
+          billingAddressLineOne: address.lineOne,
+          cardNumber:
+            "**** **** **** " + String(parseInt(card.cardNumber) % 10000),
+          membershipCost: currentUser.membershipType.price,
+          taxAmount: currentUser.membershipType.price / 10,
+          totalAmount: currentUser.membershipType.price * 1.1,
+        };
+
+        // Call the function to set data
+        setData(receiptData);
+      }
+
+      // Function to set data in the HTML
+      function setData(receiptData) {
+        document.getElementById("membershipType").innerText =
+          receiptData.membershipType;
+        document.getElementById("billingAddressLineOne").innerText =
+          receiptData.billingAddressLineOne;
+        document.getElementById("cardNumber").innerText =
+          receiptData.cardNumber;
+        document.getElementById("membershipCost").innerText =
+          receiptData.membershipCost;
+        document.getElementById("taxAmount").innerText = receiptData.taxAmount;
+        document.getElementById("totalAmount").innerText =
+          receiptData.totalAmount;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>Login Page</title>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card">
+            <div id="messageContainer" class="mb-4"></div>
+            <div class="card-header">Login</div>
+            <div class="card-body">
+              <form id="loginForm">
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="username"
+                    name="username"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password:</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    required
+                  />
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="submitForm()"
+                  >
+                    Login
+                  </button>
+                  <a href="register.html" class="btn btn-success">Sign Up</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // To do when logout page is loaded.
+        console.log("Logout being called.");
+      });
+      function submitForm() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        // You can perform additional validation if needed
+        window.location.href = "dashboard.html";
+        // Example: Send a request to the server using fetch
+        fetch("login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Update the messageContainer based on the response
+            var messageContainer = document.getElementById("messageContainer");
+            if (data.registrationSuccess === "success") {
+              messageContainer.innerHTML = "<p>" + data.message + "</p>";
+            } else if (data.error != null) {
+              messageContainer.innerHTML = "<p>" + data.error + "</p>";
+            }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Books</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="myBooks.html">My Books</a></li>
+            <li><a href="logout.html">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div class="container mt-5">
+      <h2 class="mb-4">My Books</h2>
+      <div class="row" id="booksContainer"></div>
+      <script>
+        // JavaScript code to check if booksPage is null
+
+        // Get user books from database
+        window.onload = onLoad;
+
+        function onLoad() {
+          var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+          var booksPage;
+          fetch(
+            "http://localhost:8080/subscription/books/userId/" +
+              String(currentUser.userId),
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          ).then((response) => {
+            response.json().then((data) => {
+              console.log(data);
+              booksPage = data;
+              if (!booksPage || booksPage.length === 0) {
+                document.getElementById("booksContainer").innerHTML =
+                  '<h4 class="mb-4">No Books Subscription </h4><br />';
+              } else {
+                // Loop through the paginated list of books
+                booksPage.forEach(function (book) {
+                  var cardHtml =
+                    '<div class="col-md-4 mb-4">' +
+                    '<div class="card">' +
+                    `<img src="book.png" class="card-img-top" alt="${book.bookName}" style="width: 128px; height: 128px;">` +
+                    '<div class="card-body">' +
+                    `<h5 class="card-title">${book.bookName}</h5>` +
+                    `<p class="card-text">${book.bookDescription}</p>` +
+                    `<p class="card-text"><strong>Author:</strong> ${book.authorName}</p>` +
+                    `<p class="card-text"><strong>Genre:</strong> ${book.genre}</p>` +
+                    `<p class="card-text"><strong>Price:</strong> $${book.bookPrice}</p>` +
+                    `<p class="card-text"><strong>Quantity:</strong> ${book.quantity}</p>` +
+                    // Add a "Return" button with onclick attribute
+                    `<button class="btn btn-secondary" onclick="returnBook(${book.subscriptionId})">Return</button>` +
+                    "</div></div></div>";
+                  document.getElementById("booksContainer").innerHTML +=
+                    cardHtml;
+                });
+              }
+            });
+          });
+        }
+
+        function returnBook(subscriptionId) {
+          console.log(subscriptionId);
+          fetch(
+            "http://localhost:8080/subscription/unsubscribe/" + subscriptionId,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          ).then((response) => {
+            // Handle the response or perform additional actions as needed
+            //console.log("Book returned successfully");
+            console.log(response);
+            // Optionally, you can refresh the book list after returning
+            alert("Unsubscribed Successfully");
+            location.reload();
+          });
+        }
+      </script>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

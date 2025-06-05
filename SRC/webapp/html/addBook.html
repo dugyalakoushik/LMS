@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Book</title>
+    <!-- Include Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="libDashboard.html">Librarian Dashboard</a></li>
+            <li><a href="manageBooks">Manage Books</a></li>
+            <li><a href="adminLogin.html">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div class="container mt-5">
+      <h2 class="mb-4">Librarian Dashboard</h2>
+      <h3 class="mb-3">Add a New Book</h3>
+      <form id="addBookForm">
+        <div class="form-group">
+          <label for="bookTitle">Book Title:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="bookTitle"
+            name="bookTitle"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="authorName">Author Name:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="authorName"
+            name="authorName"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="genre">Genre:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="genre"
+            name="genre"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="bookPrice">Price</label>
+          <input
+            type="text"
+            class="form-control"
+            id="bookPrice"
+            name="bookPrice"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="bookQuantity">Book Quantity</label>
+          <input
+            type="text"
+            class="form-control"
+            id="bookQuantity"
+            name="bookQuantity"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="bookDescription">Book Description:</label>
+          <textarea
+            class="form-control"
+            id="bookDescription"
+            name="bookDescription"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="addBook()">
+          Add Book
+        </button>
+      </form>
+    </div>
+    <!-- Include Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      //       {
+      //     "bookName": "The Road Less Traveled",
+      //     "bookDescription": "Self-help book that explores love, growth, and spiritual development.",
+      //     "bookPrice": 14.50,
+      //     "authorName": "M. Scott Peck",
+      //     "genre": "Self-Help",
+      //     "quantity": 50
+      // }
+      function addBook() {
+        // Add your JavaScript logic here to handle the form submission
+        // You can use AJAX to send the form data to the server
+        // Example using fetch API:
+        fetch("http://localhost:8080/book/addBook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            bookName: document.getElementById("bookTitle").value,
+            authorName: document.getElementById("authorName").value,
+            genre: document.getElementById("genre").value,
+            bookPrice: document.getElementById("bookPrice").value,
+            quantity: document.getElementById("bookQuantity").value,
+            bookDescription: document.getElementById("bookDescription").value,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle the response from the server
+            console.log(data);
+            window.location.href = "libDashboard.html";
+            // You can redirect or perform other actions based on the response
+          });
+      }
+    </script>
+  </body>
+</html>

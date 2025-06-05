@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Details</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="myBooks.html">My Books</a></li>
+            <li><a href="logout.html">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <div class="container mt-5">
+      <h2 class="mb-4">Book Details</h2>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <img
+                src="book.png"
+                class="img-fluid"
+                alt="/images/book.png"
+                style="width: 128px; height: 128px"
+              />
+            </div>
+            <div class="col-md-8">
+              <h3 class="card-title" id="bookName"></h3>
+              <p class="card-text">
+                <strong>Author:</strong> <span id="authorName"></span>
+              </p>
+              <p class="card-text">
+                <strong>Genre:</strong> <span id="bookGenre"></span>
+              </p>
+              <p class="card-text">
+                <strong>Description:</strong> <span id="bookDescription"></span>
+              </p>
+              <p class="card-text">
+                <strong>Price:</strong> <span id="bookPrice"></span>
+              </p>
+            </div>
+            <form id="rentForm">
+              <div class="form-group">
+                <label for="rentDays">Select Number of Days to Rent:</label>
+                <select class="form-control" id="rentDays" name="rentDays" required>
+                  <option value="7">1 Week</option>
+                  <option value="14">2 Weeks</option>
+                  <option value="30">1 Month</option>
+                  <!-- Add more options as needed -->
+                </select>
+              </div>
+              <input type="hidden" name="bookId" id="bookId" value="" />
+              <button type="button" class="btn btn-primary" id="rentButton" onclick="handleRent()" disabled>Rent Book</button>
+            </form>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      src = "src/webapp/html/dashboard.html";
+    </script>
+    <!-- Your custom JavaScript -->
+    <script>
+      // Simulated data (replace with actual data)
+      var theBook;
+      var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      document.addEventListener("DOMContentLoaded", function () {
+        // Function to extract a parameter from the URL
+        function getParameterByName(name, url) {
+          if (!url) url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return "";
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Get the book ID from the URL
+        var bookName = getParameterByName("bookName");
+        // Now, you have the book ID, and you can use it to fetch book details using AJAX/fetch
+        //alert("Book ID: " + bookId);
+
+        // load book data from bookId.
+        fetch("http://localhost:8080/book/search/bookName/" + bookName, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            var bookData = {
+              bookName: data[0].bookName,
+              authorName: data[0].authorName,
+              bookGenre: data[0].genre,
+              bookDescription: data[0].bookDescription,
+              bookPrice: data[0].bookPrice,
+            };
+            theBook = data[0];
+            setData(bookData);
+          })
+          .catch((error) => alert(error));
+
+        console.log(currentUser);
+
+        if(currentUser.membershipType != null){
+
+          fetch("http://localhost:8080/subscription/userId/" + String(currentUser.userId), {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              var rentButton = document.getElementById("rentButton");
+
+              // Check the condition and disable the button accordingly
+              if (data > currentUser.membershipType.numBooks - 1) {
+                rentButton.disabled = true;
+              } 
+            })
+            .catch((error) => alert(error));
+        }else{
+          console.log("Hello");
+          var rentButton = document.getElementById("rentButton");
+          console.log(rentButton);
+          rentButton.disabled = true;
+        }
+      });
+
+      // Function to set data in the HTML
+      function setData(bookData) {
+        document.getElementById("bookName").innerText = bookData.bookName;
+        document.getElementById("authorName").innerText = bookData.authorName;
+        document.getElementById("bookGenre").innerText = bookData.bookGenre;
+        document.getElementById("bookDescription").innerText =
+          bookData.bookDescription;
+        document.getElementById("bookPrice").innerText = bookData.bookPrice;
+        // Enable the rent button and set the bookId
+        document.getElementById("rentButton").removeAttribute("disabled");
+        document.getElementById("bookId").value = bookData.bookId; // Replace with the actual book ID
+      }
+
+      function handleRent() {
+        // Get form data
+        var rentDays = document.getElementById("rentDays").value;
+        var bookId = document.getElementById("bookId").value;
+        var due_date = "2023-12-"+String(1+parseInt(rentDays));
+        console.log(theBook);
+        var api_object = {
+          "subscriptionId" : getRandomInt(100, 200),
+          "book": theBook,
+          "user": currentUser,
+          "orderDate": "2023-12-01",
+          "dueDate": due_date,
+          "isReturned": 0
+        }
+
+        console.log(api_object);
+
+        fetch("http://localhost:8080/subscription/subscribe", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Add any other headers as needed
+          },
+          body: JSON.stringify(api_object),
+        }).then((response) => {
+          response.json().then(data => console.log(data));
+          window.location.href = "myBooks.html";
+        });
+
+      // window.location.href = "anotherPage.html?rentDays=" + rentDays + "&bookId=" + bookId;
+      }
+
+      function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min);
+      }
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Catalog</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header id="home" class="header">
+      <nav class="nav" role="navigation">
+        <div class="container nav-elements">
+          <ul class="navbar">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="addBook.html">Add Book</a></li>
+            <li><a href="adminLogin.html">Logout</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container mt-5">
+      <h1>Welcome Librarian</h1>
+      <!-- Success Message -->
+      <h4 id="successMessage" class="mb-4"></h4>
+
+      <!-- Search Bar and Radio Buttons -->
+      <div class="mb-4">
+        <!-- Form to submit search criteria to a servlet -->
+        <form id="searchForm" class="form-inline">
+          <div class="form-group mr-3">
+            <input
+              type="text"
+              class="form-control"
+              id="searchString"
+              placeholder="Search..."
+            />
+          </div>
+          <div class="form-group">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="searchType"
+                id="searchByTitle"
+                value="book_name"
+                checked
+              />
+              <label class="form-check-label" for="searchByTitle"
+                >Search by Title</label
+              >
+            </div>
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="searchType"
+                id="searchByAuthor"
+                value="author_id"
+              />
+              <label class="form-check-label" for="searchByAuthor"
+                >Search by Author</label
+              >
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="searchBooks()">
+            Search
+          </button>
+        </form>
+
+        <!-- Membership Information -->
+        <div id="membershipInfo">
+          <br />
+          <p id="membershipType" class="mb-4"></p>
+          <p id="membershipEndDate" class="mb-4"></p>
+          <br />
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="getMembership()"
+          >
+            Get a Membership
+          </button>
+        </div>
+      </div>
+
+      <h2 class="mb-4">Book Catalog</h2>
+      <div class="row" id="bookCatalog"></div>
+
+      <!-- Pagination -->
+      <ul id="pagination" class="pagination"></ul>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (Optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Your custom JavaScript -->
+    <script>
+      var sampleBooks;
+      var totalBooks;
+      var booksPerPage = 6;
+      var totalPages;
+      var currentPage = 1;
+      function getMembership() {
+        window.location.href = "membership.html";
+      }
+
+      // Call the onLoad function when the page loads
+      window.onload = onLoad;
+
+      // You can call this function when the page loads to disable the button if needed
+      function onLoad() {
+        var membershipBooks = localStorage.getItem("membershipBooks");
+        var membershipButton = document.querySelector("#membershipInfo button");
+
+        var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+        if (currentUser.membershipType != null) {
+          membershipButton.disabled = true;
+        }
+
+        fetch("http://localhost:8080/book/search/all", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            sampleBooks = data;
+            totalBooks = data.length;
+            totalPages = Math.ceil(totalBooks / booksPerPage);
+            updateBookCatalog(getBooksForPage(sampleBooks, currentPage));
+            updatePagination(totalPages, currentPage);
+          })
+          .catch((error) => alert(error));
+      }
+      // Assuming totalBooks is the total number of books from the serve
+      function updatePagination(totalPages, currentPage) {
+        var pagination = document.getElementById("pagination");
+        pagination.innerHTML = ""; // Clear existing content
+
+        for (var pageNum = 1; pageNum <= totalPages; pageNum++) {
+          var li = document.createElement("li");
+          li.className =
+            "page-item " + (pageNum === currentPage ? "active" : "");
+
+          var a = document.createElement("a");
+          a.className = "page-link";
+          a.href = "javascript:void(0);"; // Using javascript:void(0); to prevent the page from reloading
+          a.textContent = pageNum;
+          (function (pageNum) {
+            a.onclick = function () {
+              onPageClick(pageNum);
+            };
+          })(pageNum);
+
+          li.appendChild(a);
+          pagination.appendChild(li);
+        }
+      }
+
+      function onPageClick(pageNum) {
+        currentPage = pageNum;
+        updateBookCatalog(getBooksForPage(sampleBooks, currentPage));
+        updatePagination(totalPages, currentPage);
+      }
+
+      function getBooksForPage(allBooks, page) {
+        var startIndex = (page - 1) * booksPerPage;
+        var endIndex = startIndex + booksPerPage;
+        return allBooks.slice(startIndex, endIndex);
+      }
+
+      function searchBooks() {
+        var searchString = document.getElementById("searchString").value;
+        var searchType = document.querySelector(
+          'input[name="searchType"]:checked'
+        ).value;
+
+        // Construct the API endpoint based on the search type
+        var apiEndpoint;
+        if (searchType === "book_name") {
+          apiEndpoint =
+            "http://localhost:8080/book/search/bookName/" +
+            encodeURIComponent(searchString);
+        } else if (searchType === "author_id") {
+          apiEndpoint =
+            "http://localhost:8080/book/search/authorName/" +
+            encodeURIComponent(searchString);
+        }
+        // Fetch books based on the constructed API endpoint
+        fetch(apiEndpoint, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Update the book catalog with the search results
+            sampleBooks = data;
+            totalBooks = data.length;
+            totalPages = Math.ceil(totalBooks / booksPerPage);
+            currentPage = 1; // Reset to the first page
+            updateBookCatalog(getBooksForPage(sampleBooks, currentPage));
+            updatePagination(totalPages, currentPage);
+          })
+          .catch((error) => alert(error));
+      }
+
+      function updateBookCatalog(books) {
+        var bookCatalog = document.getElementById("bookCatalog");
+        bookCatalog.innerHTML = ""; // Clear existing content
+
+        books.forEach(function (book) {
+          var card = document.createElement("div");
+          card.className = "col-md-4 mb-4";
+          card.innerHTML = `
+                      <div class="card">
+                          <img src="book.png" class="card-img-top" alt="book.png" style="width: 128px; height: 128px;">
+                          <div class="card-body">
+                              <h5 class="card-title">${book.bookName}</h5>
+                              <p class="card-text"><strong>Author:</strong> ${book.authorName}</p>
+                              <p class="card-text"><strong>Genre:</strong> ${book.genre}</p>
+                              <a href="bookDetails.html?bookName=${book.bookName}" class="btn btn-primary">View Details</a>
+                          </div>
+                      </div>
+                  `;
+          bookCatalog.appendChild(card);
+        });
+      }
+    </script>
+  </body>
+</html>
